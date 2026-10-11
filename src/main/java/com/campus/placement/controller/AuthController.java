@@ -80,4 +80,9 @@ public class AuthController {
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "Incorrect email or password"));
         return response(u);
     }
+
+    @GetMapping("/health")
+    public String health() {
+        return "OK";
+    }
 }

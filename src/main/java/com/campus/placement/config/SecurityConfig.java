@@ -40,9 +40,17 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource(@Value("${app.cors.allowed-origin}") String origin) {
+    public CorsConfigurationSource corsConfigurationSource(@Value("${app.cors.allowed-origin:*}") String origin) {
         CorsConfiguration cfg = new CorsConfiguration();
-        cfg.setAllowedOrigins(List.of(origin));
+        if ("*".equals(origin.trim())) {
+            cfg.addAllowedOriginPattern("*");
+        } else {
+            for (String o : origin.split(",")) {
+                if (!o.trim().isEmpty()) {
+                    cfg.addAllowedOriginPattern(o.trim());
+                }
+            }
+        }
         cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         cfg.setAllowedHeaders(List.of("*"));
         UrlBasedCorsConfigurationSource src = new UrlBasedCorsConfigurationSource();
